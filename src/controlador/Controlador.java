@@ -10,25 +10,24 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-/*
- * Nombre: Controlador
- * Autor: Germán Aya
- * Fecha: 14/09/2025
- */
 public class Controlador {
 
     public static void main(String[] args) {
+        // Crea las tablas en la base de datos si aún no existen
         crearTablasSiNoExisten();
 
+        // Instancia la vista y los DAO para manejar clientes, comidas y ventas
         Vista vista = new Vista();
         ClienteDAO clienteDao = new ClienteDAOImpl();
         ComidaRapidaDAO comidaDao = new ComidaRapidaDAOImpl();
         VentaDAO ventaDao = new VentaDAOImpl();
+
+        // Formato de fecha y hora para registrar ventas
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         int opcion;
         do {
-            // ==== MENÚ REORDENADO ====
+            // Muestra el menú principal de opciones
             System.out.println("\n===== MENÚ PRINCIPAL =====");
             System.out.println("------ AGREGAR ------");
             System.out.println(" 1. Agregar cliente");
@@ -50,25 +49,29 @@ public class Controlador {
             System.out.println(" 0. Salir");
             System.out.print("Seleccione una opción: ");
 
+            // Lee la opción ingresada por el usuario y maneja errores de entrada
             try {
                 opcion = Integer.parseInt(new java.util.Scanner(System.in).nextLine());
             } catch (Exception e) {
-                opcion = -1;
+                opcion = -1; // opción inválida
             }
 
+            // Switch principal que gestiona todas las operaciones
             switch (opcion) {
                 // ===== AGREGAR =====
                 case 1 -> vista.mostrarMensaje(clienteDao.insertarCliente(vista.leerCliente()));
                 case 2 -> vista.mostrarMensaje(comidaDao.insertarComida(vista.leerComida()));
-                case 3 -> { // registrar venta
+                case 3 -> { // Registrar venta
                     String ced = vista.pedirCedulaParaVenta();
                     int idCom = vista.pedirIdComidaParaVenta();
+                    // Busca el cliente y la comida en las listas
                     ClienteVO cliente = buscarClientePorCedula(clienteDao.listarClientes(), ced);
                     ComidaRapidaVO comida = buscarComidaPorId(comidaDao.listarComidas(), idCom);
                     if (cliente == null || comida == null) {
                         vista.mostrarMensaje("Cliente o comida no encontrados.");
                         break;
                     }
+                    // Crea un objeto VentaVO y lo inserta en la base de datos
                     VentaVO v = new VentaVO();
                     v.setFechaHora(LocalDateTime.now().format(fmt));
                     v.setCliente(cliente);
@@ -82,19 +85,19 @@ public class Controlador {
                 case 6 -> vista.mostrarVentas(ventaDao.listarVentas());
 
                 // ===== EDITAR =====
-                case 7 -> { // editar cliente
+                case 7 -> { // Editar cliente
                     String ced = vista.pedirCedulaParaEditarCliente();
                     ClienteVO edit = vista.leerClienteEditado();
                     edit.setCedula(ced);
                     vista.mostrarMensaje(clienteDao.actualizarCliente(edit));
                 }
-                case 8 -> { // editar comida
+                case 8 -> { // Editar comida
                     int id = vista.pedirIdComidaParaEditar();
                     ComidaRapidaVO edit = vista.leerComidaEditada();
                     edit.setIdComida(id);
                     vista.mostrarMensaje(comidaDao.actualizarComida(edit));
                 }
-                case 9 -> { // editar venta
+                case 9 -> { // Editar venta
                     int idVenta = vista.pedirIdVentaParaEditar();
                     VentaVO vEdit = vista.leerVentaEditada();
                     vEdit.setIdVenta(idVenta);
@@ -112,6 +115,7 @@ public class Controlador {
         } while (opcion != 0);
     }
 
+    // Métodos auxiliares para buscar cliente y comida en listas
     private static ClienteVO buscarClientePorCedula(List<ClienteVO> lista, String cedula) {
         for (ClienteVO c : lista) if (c.getCedula().equals(cedula)) return c;
         return null;
@@ -122,6 +126,7 @@ public class Controlador {
         return null;
     }
 
+    // Crea las tablas en la base de datos SQLite si no existen
     private static void crearTablasSiNoExisten() {
         String sqlCliente = "CREATE TABLE IF NOT EXISTS cliente (" +
                 "cedula TEXT PRIMARY KEY, nombre TEXT, celular TEXT);";

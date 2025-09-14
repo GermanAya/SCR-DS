@@ -6,14 +6,10 @@ import modelo.ClienteVO;
 import modelo.ComidaRapidaVO;
 import modelo.VentaVO;
 
-/*
- * Nombre: Vista
- * Autor: Germán Aya
- * Fecha: 14/09/2025
- */
 public class Vista {
-    private Scanner sc = new Scanner(System.in);
+    private Scanner sc = new Scanner(System.in); // Scanner para entrada de datos
 
+    // ===== MENÚ PRINCIPAL =====
     public int menu() {
         System.out.println("\n--- MENU ---");
         System.out.println("1. Agregar cliente");
@@ -31,14 +27,15 @@ public class Vista {
         System.out.println("0. Salir");
         System.out.print("Ingrese opción: ");
         try {
-            return Integer.parseInt(sc.nextLine());
+            return Integer.parseInt(sc.nextLine()); // Lee opción del usuario
         } catch (Exception e) {
-            return -1;
+            return -1; // Retorna -1 si la entrada no es válida
         }
     }
 
-    /* --- CLIENTE --- */
+    // ===== CLIENTE =====
     public ClienteVO leerCliente() {
+        // Lee datos de un nuevo cliente
         ClienteVO c = new ClienteVO();
         System.out.print("Cédula: ");
         c.setCedula(sc.nextLine());
@@ -60,6 +57,7 @@ public class Vista {
     }
 
     public ClienteVO leerClienteEditado() {
+        // Lee los nuevos datos de un cliente para actualizar
         ClienteVO c = new ClienteVO();
         System.out.print("Nuevo nombre: ");
         c.setNombre(sc.nextLine());
@@ -68,8 +66,9 @@ public class Vista {
         return c;
     }
 
-    /* --- COMIDA --- */
+    // ===== COMIDA =====
     public ComidaRapidaVO leerComida() {
+        // Lee datos de una nueva comida
         ComidaRapidaVO cr = new ComidaRapidaVO();
         System.out.print("Nombre comida: ");
         cr.setNombreComida(sc.nextLine());
@@ -77,7 +76,7 @@ public class Vista {
         try {
             cr.setPrecio(Double.parseDouble(sc.nextLine()));
         } catch (Exception e) {
-            cr.setPrecio(0.0);
+            cr.setPrecio(0.0); // Valor por defecto si la entrada no es válida
         }
         System.out.print("Ingredientes (separados por coma): ");
         cr.setIngredientesMenu(sc.nextLine());
@@ -95,6 +94,7 @@ public class Vista {
     }
 
     public ComidaRapidaVO leerComidaEditada() {
+        // Lee los nuevos datos de una comida para actualizar
         ComidaRapidaVO cr = new ComidaRapidaVO();
         System.out.print("Nuevo nombre comida: ");
         cr.setNombreComida(sc.nextLine());
@@ -105,7 +105,7 @@ public class Vista {
         return cr;
     }
 
-    /* --- VENTA --- */
+    // ===== VENTA =====
     public String pedirCedulaParaVenta() {
         System.out.print("Cédula del cliente: ");
         return sc.nextLine();
@@ -127,6 +127,7 @@ public class Vista {
     }
 
     public VentaVO leerVentaEditada() {
+        // Lee datos nuevos para actualizar una venta
         VentaVO v = new VentaVO();
         System.out.print("Nueva fecha y hora (yyyy-MM-dd HH:mm:ss): ");
         v.setFechaHora(sc.nextLine());
@@ -141,7 +142,7 @@ public class Vista {
         return v;
     }
 
-    /* --- MENSAJES / MOSTRAR --- */
+    // ===== MENSAJES / MOSTRAR =====
     public void mostrarMensaje(String msg) {
         System.out.println(msg);
     }
